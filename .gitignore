@@ -1,0 +1,46 @@
+# Xcode
+DerivedData/
+build/
+*.xcresult
+*.moved-aside
+*.xcuserstate
+
+# User-specific Xcode data
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+
+# CocoaPods / Carthage / dependency managers
+Pods/
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / local tooling
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Secrets and local configuration
+*.env
+.env
+.env.*
+!.env.example
+Secrets.xcconfig
+GoogleService-Info.plist
+
