@@ -1,41 +1,27 @@
 # Estado del proyecto
 
-Fecha de preparacion documental: 2026-05-26.
+Última revisión: 2026-07-03.
 
-## Datos detectados
+## Configuración
 
-- Proyecto: `SwiftUIMVVMTemplate`.
-- Target: `SwiftUIMVVMTemplate`.
-- Scheme: `SwiftUIMVVMTemplate`.
-- Framework de UI: SwiftUI.
-- Archivo principal: `SwiftUIMVVMTemplate/App/SwiftUIMVVMTemplateApp.swift`.
-- Vista inicial actual: `SwiftUIMVVMTemplate/Presentation/Views/Home/HomeView.swift`.
-- Documento de origen: `DOCUMENTACION_ESQUELETO_IOS.md`.
-- Repositorio Git: no inicializado en el momento de esta preparacion.
-- Proyecto Xcode con `PBXFileSystemSynchronizedRootGroup`; los archivos bajo `SwiftUIMVVMTemplate/` se sincronizan sin editar manualmente `project.pbxproj`.
-
-## Estructura actual
-
-```text
-SwiftUIMVVMTemplate/
-├── App/
-├── Core/
-├── Data/
-├── Domain/
-├── Presentation/
-└── Assets.xcassets
-
-SwiftUIMVVMTemplate.xcodeproj/
-└── project.pbxproj
-```
+- Deployment target: iOS 17.0.
+- Lenguaje: Swift 6.
+- Concurrencia estricta: Complete.
+- Schemes: Development y Production.
+- Targets: app y unit tests.
+- Localización: inglés y español.
+- Dependencias externas: ninguna.
 
 ## Estado funcional
 
-- El proyecto ya tiene una base SwiftUI + MVVM por capas.
-- No existe target de tests detectado.
-- No se han anadido dependencias externas.
-- Build verificado con `xcodebuild -scheme SwiftUIMVVMTemplate -project SwiftUIMVVMTemplate.xcodeproj -destination generic/platform=iOS build`.
+- Home usa mock determinista en Development.
+- Production demuestra el cliente HTTP con un endpoint configurable.
+- Settings demuestra persistencia key-value.
+- ExampleDetail demuestra navegación tipada.
+- Previews no usan red ni delays reales.
+- Build genérico funciona con firma desactivada.
+- Los 9 tests iniciales pasan en iPhone 16 Simulator.
 
-## Proxima accion recomendada
+## Pendiente manual
 
-Crear un target de tests cuando se quiera empezar a validar ViewModels, UseCases y Repositories de forma automatizada.
+- Crear una segunda aplicación real desde el repositorio para auditar el proceso completo de renombrado y detectar acoplamientos residuales.

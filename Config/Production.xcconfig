@@ -1,0 +1,8 @@
+#include "Base.xcconfig"
+
+APP_ENVIRONMENT = production
+API_BASE_URL = https:/$()/jsonplaceholder.typicode.com
+DISPLAY_NAME = MVVM Starter
+PRODUCT_BUNDLE_IDENTIFIER = com.example.SwiftUIMVVMTemplate
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) PRODUCTION
+

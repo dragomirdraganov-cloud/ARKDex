@@ -1,0 +1,8 @@
+#include "Base.xcconfig"
+
+APP_ENVIRONMENT = development
+API_BASE_URL = https:/$()/example.com
+DISPLAY_NAME = MVVM Starter Dev
+PRODUCT_BUNDLE_IDENTIFIER = com.example.SwiftUIMVVMTemplate.dev
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) DEBUG DEVELOPMENT
+

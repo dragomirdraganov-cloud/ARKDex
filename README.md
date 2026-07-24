@@ -1,107 +1,120 @@
 # SwiftUIMVVMTemplate
 
-Proyecto iOS base creado con Xcode y SwiftUI. La intencion del repositorio es evolucionar hacia un esqueleto limpio con arquitectura MVVM, separacion por capas y una estructura facil de mantener.
+Starter iOS reutilizable con SwiftUI y MVVM pragmático, organizado por features y preparado para comenzar una aplicación sin credenciales externas.
 
-## Estado actual
+## Requisitos
 
-- Nombre del proyecto: `SwiftUIMVVMTemplate`.
-- Target principal: `SwiftUIMVVMTemplate`.
-- Scheme principal: `SwiftUIMVVMTemplate`.
-- Punto de entrada actual: `SwiftUIMVVMTemplate/App/SwiftUIMVVMTemplateApp.swift`.
-- UI actual: SwiftUI con `HomeView`.
-- Arquitectura base MVVM implementada con capas `App`, `Presentation`, `Domain`, `Data` y `Core`.
-- No existe target de tests todavia.
+- Xcode con soporte para Swift 6.
+- iOS 17 o posterior.
 
-## Documentacion
+## Incluye
 
-La guia original se conserva en `DOCUMENTACION_ESQUELETO_IOS.md`. Para trabajar de forma mas comoda, la informacion operativa esta separada en:
+- Swift 6 y Strict Concurrency completa.
+- `@Observable` y ViewModels aislados al `MainActor`.
+- Composition root sin singletons globales.
+- Navegación tipada y tab bar Home/Settings.
+- Networking con `URLSession`, errores tipados, timeout y logs redactados.
+- Persistencia key-value live e in-memory.
+- String Catalog ES/EN.
+- Design System semántico con la paleta del producto.
+- Tipografía Montserrat variable con soporte para Dynamic Type.
+- Home inicial con buscador centrado y sugerencias adaptables al contenido.
+- Previews deterministas.
+- Tests con Swift Testing.
+- Configuraciones Development/Production mediante `.xcconfig`.
+- CI, auditoría básica de secretos y checklist de renombrado.
 
-- `docs/PROJECT_STATUS.md`: estado actual y decisiones ya detectadas.
-- `docs/ARCHITECTURE.md`: arquitectura objetivo SwiftUI + MVVM.
-- `docs/IMPLEMENTATION_CHECKLIST.md`: fases y tareas marcables.
-- `docs/CODEX_INSTRUCTIONS.md`: reglas que Codex debe seguir al programar.
-- `docs/FEATURE_GUIDE.md`: patron para anadir nuevas features.
-- `docs/GITHUB_WORKFLOW.md`: checklist antes de subir cambios a GitHub.
-
-## Arquitectura objetivo
-
-La estructura base separa responsabilidades en estas capas:
-
-```text
-App
-Presentation
-Domain
-Data
-Core
-Resources
-Tests
-```
-
-Resumen rapido:
-
-- `App`: punto de entrada, entorno global y composicion inicial.
-- `Presentation`: vistas SwiftUI, ViewModels, componentes y navegacion.
-- `Domain`: modelos, casos de uso y protocolos de repositorios.
-- `Data`: repositorios concretos, DTOs, data sources y mappers.
-- `Core`: networking, storage, inyeccion de dependencias, configuracion, utilidades y design system.
-- `Resources`: assets, localizacion y recursos visuales.
-
-## Estructura principal
+## Estructura
 
 ```text
 SwiftUIMVVMTemplate/
 ├── App/
+│   └── Navigation/
 ├── Core/
-│   ├── Configuration/
-│   ├── DependencyInjection/
-│   ├── DesignSystem/
-│   ├── Extensions/
-│   ├── Networking/
-│   ├── Storage/
-│   └── Utilities/
-├── Data/
-│   ├── DTOs/
-│   ├── DataSources/
-│   ├── Mappers/
-│   └── Repositories/
-├── Domain/
-│   ├── Models/
-│   ├── Protocols/
-│   └── UseCases/
-├── Presentation/
-│   ├── Common/
 │   ├── Components/
-│   ├── Navigation/
-│   ├── ViewModels/
-│   └── Views/
-└── Assets.xcassets
+│   ├── DesignSystem/
+│   ├── Logging/
+│   ├── Networking/
+│   └── Persistence/
+├── Features/
+│   ├── Home/
+│   ├── Settings/
+│   └── ExampleDetail/
+├── PreviewSupport/
+└── Resources/
+
+SwiftUIMVVMTemplateTests/
+├── App/
+├── Core/
+└── Features/
+
+Config/
+Scripts/
 ```
 
-## Como anadir una feature
+## Schemes
 
-1. Crear el modelo en `Domain/Models`.
-2. Crear el protocolo de repositorio en `Domain/Protocols`.
-3. Crear el caso de uso en `Domain/UseCases`.
-4. Crear DTO, data source, mapper y repositorio concreto en `Data`.
-5. Crear ViewModel y View en `Presentation`.
-6. Registrar la composicion de dependencias en `Core/DependencyInjection/AppContainer.swift`.
-7. Anadir una ruta en `Presentation/Navigation/AppRoute.swift` si hay navegacion.
-8. Actualizar tests cuando exista target de tests.
+- `SwiftUIMVVMTemplate-Development`: configuración Debug, bundle `.dev` y servicio Home mock para funcionar sin red.
+- `SwiftUIMVVMTemplate-Production`: configuración Release y ejemplo remoto basado en `API_BASE_URL`.
 
-## Flujo recomendado
+Los valores se encuentran en `Config/Development.xcconfig` y `Config/Production.xcconfig`.
 
-1. Revisar `docs/PROJECT_STATUS.md`.
-2. Seguir las fases de `docs/IMPLEMENTATION_CHECKLIST.md`.
-3. Marcar cada tarea completada en el checklist.
-4. Mantener las reglas de `docs/CODEX_INSTRUCTIONS.md`.
-5. Antes de subir cambios a GitHub, actualizar este `README.md` y cualquier documento de `docs/` que haya quedado desfasado.
+## Validación
 
-## Validacion
-
-Cuando se hagan cambios de codigo, comprobar que el proyecto compila:
+Validación completa usando un simulador disponible:
 
 ```bash
-xcodebuild -scheme SwiftUIMVVMTemplate -project SwiftUIMVVMTemplate.xcodeproj -destination generic/platform=iOS build
+bash Scripts/validate-template.sh 'platform=iOS Simulator,name=iPhone 16,OS=latest'
 ```
 
-Si se anaden tests en el futuro, ejecutar tambien el esquema de tests correspondiente.
+Build sin firma:
+
+```bash
+xcodebuild \
+  -scheme SwiftUIMVVMTemplate-Development \
+  -project SwiftUIMVVMTemplate.xcodeproj \
+  -destination generic/platform=iOS \
+  CODE_SIGNING_ALLOWED=NO \
+  build
+```
+
+Tests:
+
+```bash
+xcodebuild \
+  -scheme SwiftUIMVVMTemplate-Development \
+  -project SwiftUIMVVMTemplate.xcodeproj \
+  -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+  test
+```
+
+## Configuración sensible
+
+El starter no contiene secretos. Si una aplicación necesita configuración local:
+
+1. Copiar `Config/Secrets.xcconfig.example` como `Config/Secrets.xcconfig`.
+2. Añadir allí únicamente valores locales.
+3. No subir `Secrets.xcconfig` a Git.
+
+Antes de publicar cambios:
+
+```bash
+bash Scripts/check-secrets.sh
+```
+
+## Crear una feature
+
+Mantener View, ViewModel, servicios y modelos específicos dentro de `Features/FeatureName`. Añadir capas solo cuando exista una responsabilidad real. Consultar `docs/FEATURE_GUIDE.md`.
+
+## Documentación
+
+- `MVVM_STARTER_PROJECT_PROPOSAL.md`: propuesta de evolución recibida.
+- `MVVM_STARTER_PROJECT_RECOMMENDATIONS.md`: análisis técnico y plan aplicado.
+- `docs/ARCHITECTURE.md`: límites y decisiones de arquitectura.
+- `docs/IMPLEMENTATION_CHECKLIST.md`: estado de las cinco fases.
+- `docs/FEATURE_GUIDE.md`: patrón para nuevas features.
+- `docs/RENAME_CHECKLIST.md`: pasos para adoptar el starter.
+- `docs/GITHUB_WORKFLOW.md`: validaciones antes de subir cambios.
+- `docs/CODEX_INSTRUCTIONS.md`: reglas operativas para futuros cambios.
+
+Antes de subir cambios a GitHub, actualizar este README y los documentos afectados para que describan el código real.

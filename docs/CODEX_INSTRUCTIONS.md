@@ -1,43 +1,35 @@
 # Instrucciones para Codex
 
-Usar este documento antes de programar cambios en el proyecto.
+## Antes de programar
 
-## Reglas generales
+- Revisar `README.md`, `docs/ARCHITECTURE.md` y `docs/IMPLEMENTATION_CHECKLIST.md`.
+- Revisar `git status` y conservar cambios del usuario.
+- Mantener iOS 17, Swift 6 y Strict Concurrency completa.
 
-- Mantener el proyecto compilable al terminar cada cambio relevante.
-- No anadir dependencias externas sin permiso explicito.
-- No usar UIKit salvo necesidad clara.
-- No introducir backend real ni servicios ficticios complejos.
-- No eliminar assets, configuraciones o archivos necesarios.
-- Mantener el codigo simple, legible y con responsabilidades claras.
+## Código
 
-## SwiftUI y MVVM
-
-- Las vistas SwiftUI solo deben encargarse de declarar UI y reaccionar al estado.
-- No poner logica de negocio dentro de vistas.
-- Crear ViewModels testeables.
-- Inyectar dependencias por inicializador siempre que sea razonable.
-- Usar protocolos para dependencias que deban sustituirse en tests.
-- Marcar ViewModels como `@MainActor` cuando publiquen estado para la UI.
-- Preferir `@Observable` para ViewModels nuevos mientras el deployment target siga permitiendo Observation moderna.
-- Preferir `final class` para ViewModels y servicios cuando no se espere herencia.
-
-## Concurrencia
-
-- Preferir `async/await` frente a callbacks.
-- Evitar trabajo pesado en el hilo principal.
-- Mantener cambios de estado de UI en MainActor.
+- Organizar por features.
+- No introducir singletons globales para dependencias.
+- Usar `@Observable` y `@MainActor` para ViewModels.
+- No usar `@MainActor` como solución genérica para infraestructura.
+- Diseñar modelos y contratos cruzados como `Sendable`.
+- No usar `@unchecked Sendable`, `nonisolated(unsafe)` ni `Task.detached` sin una justificación documentada.
+- Preferir APIs modernas de SwiftUI compatibles con iOS 17.
+- No añadir dependencias externas sin permiso explícito.
+- No introducir capabilities, secretos ni servicios de producto por defecto.
 
 ## Calidad
 
-- Evitar force unwraps innecesarios.
-- Evitar nombres genericos como `Manager` salvo justificacion clara.
-- Mantener archivos pequenos y enfocados.
-- Usar `ViewState` para representar `idle`, `loading`, `success`, `empty` y `error` cuando una pantalla tenga carga asincrona.
+- Añadir o actualizar tests para cada comportamiento.
+- Tests y previews no deben usar red ni delays reales.
+- Mantener textos visibles en ES y EN.
+- Usar tokens semánticos del Design System.
+- Redactar logs y no exponer cabeceras, tokens ni payloads sensibles.
 
-## Antes de terminar una tarea
+## Antes de terminar
 
-- Marcar tareas completadas en `docs/IMPLEMENTATION_CHECKLIST.md`.
-- Actualizar `README.md` si cambia la estructura, el flujo de trabajo o el estado del proyecto.
-- Actualizar documentos en `docs/` si cambian reglas, arquitectura o convenciones.
-- Compilar con `xcodebuild` cuando se hayan hecho cambios de codigo.
+- Ejecutar `bash Scripts/check-secrets.sh`.
+- Ejecutar build sin firma.
+- Ejecutar tests.
+- Actualizar README y documentación afectada.
+- Marcar el avance en `docs/IMPLEMENTATION_CHECKLIST.md`.

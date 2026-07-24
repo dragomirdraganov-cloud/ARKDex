@@ -1,5 +1,7 @@
 # Documentación para generar un esqueleto iOS con SwiftUI + MVVM
 
+> **Documento archivado.** Describe la primera versión por capas del starter. Para cambios nuevos usar `README.md`, `docs/ARCHITECTURE.md`, `docs/CODEX_INSTRUCTIONS.md` y `docs/IMPLEMENTATION_CHECKLIST.md`. La arquitectura vigente está organizada por features y usa iOS 17, Swift 6 y Strict Concurrency completa.
+
 ## 1. Objetivo
 
 Crear una estructura base para un proyecto iOS generado desde Xcode usando SwiftUI, organizada con arquitectura MVVM, preparada para crecer de forma ordenada y fácil de mantener.
@@ -978,4 +980,3 @@ El trabajo se considera terminado cuando:
 - No hay dependencias externas añadidas.
 - El README explica cómo trabajar con la arquitectura.
 - La estructura permite añadir nuevas features siguiendo un patrón repetible.
-

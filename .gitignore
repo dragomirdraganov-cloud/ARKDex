@@ -1,5 +1,6 @@
 # Xcode
 DerivedData/
+.derivedData/
 build/
 *.xcresult
 *.moved-aside
@@ -43,4 +44,3 @@ fastlane/test_output/
 !.env.example
 Secrets.xcconfig
 GoogleService-Info.plist
-

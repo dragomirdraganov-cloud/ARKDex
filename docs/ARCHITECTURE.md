@@ -1,134 +1,83 @@
-# Arquitectura SwiftUI + MVVM
+# Arquitectura
 
-## Objetivo
+## Principios
 
-Convertir el proyecto default de Xcode en una base iOS simple, clara y preparada para crecer usando SwiftUI, MVVM e inyeccion explicita de dependencias.
-
-## Capas
-
-```text
-App
-├── Presentation
-├── Domain
-├── Data
-├── Core
-└── Resources
-```
+- MVVM pragmático orientado por features.
+- Las vistas declaran UI y delegan lógica de pantalla.
+- Los ViewModels usan `@Observable` y `@MainActor`.
+- Networking y persistencia no pertenecen al MainActor.
+- Las dependencias se inyectan por inicializador.
+- Los protocolos se introducen cuando permiten sustituir una dependencia o expresar un límite real.
+- No se crean capas o archivos vacíos por convención.
 
 ## App
 
-Responsabilidad:
+`AppDependencies` es el composition root. Construye servicios live, mocks y almacenamiento, pero no es un singleton.
 
-- Mantener el punto de entrada de la aplicacion.
-- Crear el contenedor raiz de dependencias.
-- Definir la vista inicial.
-- Configurar entorno global si hace falta.
+`AppRootView` posee:
 
-Archivos esperados:
+- `AppState` para selección global de tab.
+- `AppRouter` para paths tipados.
+- El ViewModel raíz de Settings.
 
-- `App/SwiftUIMVVMTemplateApp.swift`
-- `App/AppEnvironment.swift`
+La búsqueda inicial de Home mantiene su texto como estado local de vista hasta que exista una fuente real de resultados.
 
-## Presentation
+`AppState` solo debe incorporar estado verdaderamente global.
 
-Responsabilidad:
+## Features
 
-- Vistas SwiftUI.
-- ViewModels.
-- Componentes reutilizables.
-- Navegacion.
-- Estados de pantalla.
+Cada feature contiene sus vistas, ViewModels, servicios y modelos específicos.
 
-Reglas:
+```text
+Features/Home/
+├── HomeView.swift
+├── HomeViewModel.swift
+├── HomeModels.swift
+├── HomeService.swift
+└── HomeServiceLive.swift
+```
 
-- Las vistas no deben llamar directamente a red, base de datos ni servicios externos.
-- Las vistas observan estado publicado por ViewModels.
-- Los ViewModels reciben dependencias por inicializador.
-- Los ViewModels que publiquen estado para UI deben marcarse como `@MainActor`.
-- En este proyecto se usa `@Observable` para ViewModels nuevos porque el deployment target permite Observation moderna.
-
-## Domain
-
-Responsabilidad:
-
-- Modelos de dominio.
-- Casos de uso.
-- Protocolos de repositorios.
-- Reglas de negocio.
-
-Reglas:
-
-- No importar SwiftUI.
-- No depender de detalles de red, almacenamiento o UI.
-- Debe poder testearse de forma aislada.
-
-## Data
-
-Responsabilidad:
-
-- Repositorios concretos.
-- Data sources remotos o locales.
-- DTOs.
-- Mappers entre DTOs y modelos de dominio.
-
-Reglas:
-
-- Puede depender de `Domain`.
-- No debe depender de `Presentation`.
-- Los DTOs no deben filtrarse hacia las vistas.
+Una pantalla sin estado o lógica no necesita ViewModel. DTOs y mappers pueden vivir dentro de la implementación del servicio mientras no sean compartidos.
 
 ## Core
 
-Responsabilidad:
+`Core` contiene únicamente infraestructura transversal:
 
-- Networking.
-- Storage.
-- Dependency injection.
-- Configuracion.
-- Extensiones.
-- Logging.
-- Design system.
+- `Components`: estados visuales reutilizables.
+- `DesignSystem`: tokens y estilos semánticos.
+- `Logging`: categorías OSLog y política de privacidad.
+- `Networking`: endpoint, request builder, transport y cliente HTTP.
+- `Persistence`: almacenamiento key-value intercambiable.
 
-Reglas:
+Core no debe importar ni conocer features.
 
-- Evitar que `Core` se convierta en una carpeta generica sin criterio.
-- Cada subcarpeta debe tener una responsabilidad clara.
+## Concurrencia
 
-## Estructura objetivo
+- Swift 6 con Strict Concurrency completa.
+- UI y ViewModels están aislados explícitamente al `MainActor`.
+- Servicios, modelos, DTOs, errores y configuración usan límites `Sendable`.
+- `APIClient` es un actor para proteger decoder y transporte.
+- Stores mutables son actors.
+- La cancelación se propaga y no se convierte en error visual genérico.
+- No se usa `Task.detached` ni `@unchecked Sendable`.
 
-```text
-SwiftUIMVVMTemplate/
-├── App/
-│   ├── SwiftUIMVVMTemplateApp.swift
-│   └── AppEnvironment.swift
-├── Presentation/
-│   ├── Views/Home/HomeView.swift
-│   ├── ViewModels/Home/HomeViewModel.swift
-│   ├── Components/LoadingView.swift
-│   ├── Components/ErrorView.swift
-│   ├── Components/EmptyStateView.swift
-│   ├── Common/ViewState.swift
-│   └── Navigation/
-│       ├── AppRoute.swift
-│       └── AppRouter.swift
-├── Domain/
-│   ├── Models/
-│   ├── UseCases/
-│   └── Protocols/
-├── Data/
-│   ├── Repositories/
-│   ├── DataSources/
-│   ├── DTOs/
-│   └── Mappers/
-├── Core/
-│   ├── Networking/
-│   ├── Storage/
-│   ├── DependencyInjection/
-│   ├── Configuration/
-│   ├── Extensions/
-│   ├── Utilities/
-│   └── DesignSystem/
-└── Resources/
-```
+## Configuración
 
-Nota: los assets generados por Xcode se mantienen actualmente como `SwiftUIMVVMTemplate/Assets.xcassets`.
+El proyecto usa un target de app y dos schemes:
+
+- Development → Debug → `Development.xcconfig`.
+- Production → Release → `Production.xcconfig`.
+
+Bundle ID, nombre visible, entorno y base URL cambian por configuración. Un segundo target solo se justifica si cambian capabilities, entitlements o fuentes compiladas.
+
+## Testing
+
+El target `SwiftUIMVVMTemplateTests` utiliza Swift Testing. Los tests no acceden a red ni esperan tiempo real.
+
+Cobertura base:
+
+- Router.
+- HomeViewModel success/empty/error/retry.
+- APIClient y URLRequestBuilder.
+- Persistencia in-memory.
+- SettingsViewModel.

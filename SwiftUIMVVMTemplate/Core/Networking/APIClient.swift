@@ -1,48 +1,54 @@
 import Foundation
+import OSLog
 
-protocol APIClientProtocol {
-    func request<T: Decodable>(_ endpoint: APIEndpoint) async throws -> T
+protocol APIClientProtocol: Sendable {
+    func request<Response: Decodable & Sendable>(
+        _ endpoint: any APIEndpoint,
+        as responseType: Response.Type
+    ) async throws -> Response
 }
 
-final class APIClient: APIClientProtocol {
-    private let session: URLSession
+actor APIClient: APIClientProtocol {
+    private let transport: any HTTPTransport
     private let decoder: JSONDecoder
 
-    init(session: URLSession = .shared, decoder: JSONDecoder = JSONDecoder()) {
-        self.session = session
+    init(
+        transport: any HTTPTransport,
+        decoder: JSONDecoder = JSONDecoder()
+    ) {
+        self.transport = transport
         self.decoder = decoder
     }
 
-    func request<T: Decodable>(_ endpoint: APIEndpoint) async throws -> T {
-        var components = URLComponents(
-            url: endpoint.baseURL.appending(path: endpoint.path),
-            resolvingAgainstBaseURL: false
-        )
-        components?.queryItems = endpoint.queryItems.isEmpty ? nil : endpoint.queryItems
+    func request<Response: Decodable & Sendable>(
+        _ endpoint: any APIEndpoint,
+        as responseType: Response.Type = Response.self
+    ) async throws -> Response {
+        let request = try URLRequestBuilder.makeRequest(for: endpoint)
+        AppLog.networking.info("Request \(endpoint.method.rawValue, privacy: .public) \(request.url?.absoluteString ?? "invalid-url", privacy: .public)")
 
-        guard let url = components?.url else {
-            throw NetworkError.invalidURL
+        let response: HTTPResponse
+        do {
+            response = try await transport.send(request)
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch let error as NetworkError {
+            throw error
+        } catch {
+            AppLog.networking.error("Transport error: \(String(describing: error), privacy: .private)")
+            throw NetworkError.transport
         }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = endpoint.method.rawValue
-        request.allHTTPHeaderFields = endpoint.headers
-
-        let (data, response) = try await session.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.invalidResponse
-        }
-
-        guard 200..<300 ~= httpResponse.statusCode else {
-            throw NetworkError.serverError(statusCode: httpResponse.statusCode)
+        guard 200..<300 ~= response.statusCode else {
+            AppLog.networking.error("HTTP status \(response.statusCode, privacy: .public)")
+            throw NetworkError.server(statusCode: response.statusCode)
         }
 
         do {
-            return try decoder.decode(T.self, from: data)
+            return try decoder.decode(responseType, from: response.data)
         } catch {
-            throw NetworkError.decodingFailed
+            AppLog.networking.error("Decoding error: \(String(describing: error), privacy: .private)")
+            throw NetworkError.decoding
         }
     }
 }
-

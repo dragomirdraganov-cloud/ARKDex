@@ -1,48 +1,35 @@
-# Como anadir una nueva feature
+# Cómo añadir una feature
 
-Ejemplo para una feature llamada `Profile`.
-
-## Estructura
+Ejemplo para una feature `Profile`:
 
 ```text
-Presentation/
-├── Views/Profile/ProfileView.swift
-└── ViewModels/Profile/ProfileViewModel.swift
-
-Domain/
-├── Models/Profile.swift
-├── UseCases/FetchProfileUseCase.swift
-└── Protocols/ProfileRepositoryProtocol.swift
-
-Data/
-├── Repositories/ProfileRepository.swift
-├── DataSources/RemoteProfileDataSource.swift
-├── DTOs/ProfileDTO.swift
-└── Mappers/ProfileMapper.swift
+Features/Profile/
+├── ProfileView.swift
+├── ProfileViewModel.swift
+├── ProfileModels.swift
+├── ProfileService.swift
+└── ProfileServiceLive.swift
 ```
 
 ## Pasos
 
-1. Crear modelo de dominio.
-2. Crear protocolo del repositorio.
-3. Crear caso de uso.
-4. Crear DTO si hay datos externos.
-5. Crear mapper de DTO a dominio.
-6. Crear repositorio concreto.
-7. Crear ViewModel.
-8. Crear View.
-9. Registrar dependencias en `AppContainer`.
-10. Anadir ruta en `AppRoute` si la feature requiere navegacion.
-11. Anadir tests basicos cuando exista target de tests.
-12. Marcar el progreso en `docs/IMPLEMENTATION_CHECKLIST.md` si afecta al esqueleto base.
+1. Crear la View.
+2. Añadir ViewModel solo si existe estado o lógica de pantalla.
+3. Definir un protocolo de servicio si la feature depende de red, persistencia u otra fuente sustituible.
+4. Crear implementación live y mock determinista.
+5. Registrar la implementación live en `AppDependencies`.
+6. Añadir una ruta tipada si la feature necesita navegación.
+7. Añadir recursos ES/EN al String Catalog.
+8. Añadir previews de estados relevantes.
+9. Añadir tests sin red ni tiempos reales.
+10. Actualizar documentación si cambia la arquitectura o el flujo de trabajo.
 
-## Convenciones de nombres
+## Reglas
 
-- Vistas: `FeatureNameView.swift`.
-- ViewModels: `FeatureNameViewModel.swift`.
-- Casos de uso: `ActionEntityUseCase.swift`.
-- Protocolos de repositorio: `EntityRepositoryProtocol.swift`.
-- Repositorios concretos: `EntityRepository.swift`.
-- DTOs: `EntityDTO.swift`.
-- Mappers: `EntityMapper.swift`.
+- Mantener modelos y servicios específicos dentro de la feature.
+- Mover algo a Core solo cuando sea utilizado por varias features y no dependa de ellas.
+- No crear DTO, mapper, repository o use case si no aportan una separación real.
+- ViewModels de UI: `@MainActor @Observable`.
+- Valores que cruzan aislamiento: `Sendable`.
+- Dependencias por inicializador.
 
