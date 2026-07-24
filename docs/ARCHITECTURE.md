@@ -1,83 +1,82 @@
-# Arquitectura
+# Arquitectura de ARKDex
 
 ## Principios
 
 - MVVM pragmático orientado por features.
-- Las vistas declaran UI y delegan lógica de pantalla.
-- Los ViewModels usan `@Observable` y `@MainActor`.
-- Networking y persistencia no pertenecen al MainActor.
-- Las dependencias se inyectan por inicializador.
-- Los protocolos se introducen cuando permiten sustituir una dependencia o expresar un límite real.
-- No se crean capas o archivos vacíos por convención.
+- Estado local para interacción puramente visual.
+- ViewModel cuando existe lógica o estado de pantalla.
+- Dependencias externas detrás de contratos sustituibles.
+- Modelos de dominio independientes del formato remoto.
+- Swift 6 y límites de aislamiento explícitos.
 
 ## App
 
-`AppDependencies` es el composition root. Construye servicios live, mocks y almacenamiento, pero no es un singleton.
+`ARKDexApp` construye `AppDependencies` y presenta `AppRootView`.
 
-`AppRootView` posee:
+`AppRootView` posee el estado global mínimo:
 
-- `AppState` para selección global de tab.
-- `AppRouter` para paths tipados.
-- El ViewModel raíz de Settings.
+- Tab seleccionada.
+- Rutas de navegación.
+- ViewModels raíz que realmente lo requieran.
 
-La búsqueda inicial de Home mantiene su texto como estado local de vista hasta que exista una fuente real de resultados.
-
-`AppState` solo debe incorporar estado verdaderamente global.
+Los datos de criaturas no deben almacenarse en `AppState`.
 
 ## Features
 
-Cada feature contiene sus vistas, ViewModels, servicios y modelos específicos.
+La estructura actual incluye Home, Settings y un detalle de ejemplo. La evolución de producto debe introducir una feature de criaturas sin convertir `Core` en un contenedor genérico.
+
+Estructura prevista:
 
 ```text
-Features/Home/
-├── HomeView.swift
-├── HomeViewModel.swift
-├── HomeModels.swift
-├── HomeService.swift
-└── HomeServiceLive.swift
+ARKDex/Features/
+├── Home/
+├── Creatures/
+│   ├── CreatureModels.swift
+│   ├── CreatureRepository.swift
+│   ├── CreatureSearchView.swift
+│   ├── CreatureSearchViewModel.swift
+│   └── CreatureDetailView.swift
+└── Settings/
 ```
 
-Una pantalla sin estado o lógica no necesita ViewModel. DTOs y mappers pueden vivir dentro de la implementación del servicio mientras no sean compartidos.
+## Datos de criaturas
+
+El límite de datos debe:
+
+- Proporcionar identidad estable.
+- Validar campos obligatorios.
+- Representar ausencias explícitamente.
+- Conservar fuente o versión cuando sea necesario.
+- Permitir implementación mock, local y remota.
+
+No se deben inventar estadísticas de ARK ni ocultar errores de mapeo con valores aleatorios.
 
 ## Core
 
-`Core` contiene únicamente infraestructura transversal:
+- `Components`: estados visuales compartidos.
+- `DesignSystem`: colores, Montserrat, spacing y estilos.
+- `Logging`: categorías y redacción.
+- `Networking`: requests, transporte y errores HTTP.
+- `Persistence`: almacenamiento intercambiable.
 
-- `Components`: estados visuales reutilizables.
-- `DesignSystem`: tokens y estilos semánticos.
-- `Logging`: categorías OSLog y política de privacidad.
-- `Networking`: endpoint, request builder, transport y cliente HTTP.
-- `Persistence`: almacenamiento key-value intercambiable.
-
-Core no debe importar ni conocer features.
+Core no conoce features.
 
 ## Concurrencia
 
-- Swift 6 con Strict Concurrency completa.
-- UI y ViewModels están aislados explícitamente al `MainActor`.
-- Servicios, modelos, DTOs, errores y configuración usan límites `Sendable`.
-- `APIClient` es un actor para proteger decoder y transporte.
-- Stores mutables son actors.
-- La cancelación se propaga y no se convierte en error visual genérico.
-- No se usa `Task.detached` ni `@unchecked Sendable`.
+- UI y ViewModels: `@MainActor`.
+- Modelos y contratos cruzados: `Sendable`.
+- Networking y persistencia: fuera del actor de UI.
+- Cancelación propagada como cancelación.
+- Sin `Task.detached`, `@unchecked Sendable` o aislamiento inseguro salvo justificación documentada.
 
 ## Configuración
 
-El proyecto usa un target de app y dos schemes:
-
-- Development → Debug → `Development.xcconfig`.
-- Production → Release → `Production.xcconfig`.
-
-Bundle ID, nombre visible, entorno y base URL cambian por configuración. Un segundo target solo se justifica si cambian capabilities, entitlements o fuentes compiladas.
+- `ARKDex-Development` usa Debug y datos deterministas.
+- `ARKDex-Production` usa Release y configuración externa.
+- El endpoint actual es un placeholder hasta seleccionar una fuente aprobada.
 
 ## Testing
 
-El target `SwiftUIMVVMTemplateTests` utiliza Swift Testing. Los tests no acceden a red ni esperan tiempo real.
+`ARKDexTests` usa Swift Testing. Las pruebas no dependen de red ni de esperas reales.
 
-Cobertura base:
-
-- Router.
-- HomeViewModel success/empty/error/retry.
-- APIClient y URLRequestBuilder.
-- Persistencia in-memory.
-- SettingsViewModel.
+La futura capa de criaturas deberá cubrir búsqueda, identidad, mapeo, datos ausentes y errores de fuente.

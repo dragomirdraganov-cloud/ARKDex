@@ -1,13 +1,13 @@
 ## Resumen
 
-- 
+-
 
-## Validacion
+## Validación
 
 - [ ] `bash Scripts/check-secrets.sh` ejecutado.
-- [ ] Build sin firma ejecutado con `SwiftUIMVVMTemplate-Development`.
-- [ ] Tests Swift Testing ejecutados en simulador.
-- [ ] `README.md` actualizado si el cambio afecta estructura, uso, estado o flujo de trabajo.
-- [ ] Documentos en `docs/` actualizados si el cambio afecta arquitectura, reglas, checklist o convenciones.
-- [ ] `docs/IMPLEMENTATION_CHECKLIST.md` actualizado con las tareas completadas.
+- [ ] Build sin firma ejecutado con `ARKDex-Development`.
+- [ ] `ARKDexTests` ejecutados en simulador.
+- [ ] `README.md` y documentos afectados actualizados.
 - [ ] String Catalog ES/EN actualizado si cambiaron textos visibles.
+- [ ] Los datos dummy están identificados como temporales.
+- [ ] No se añadieron estadísticas de ARK sin una fuente verificable.

@@ -1,33 +1,49 @@
-# SwiftUIMVVMTemplate
+# ARKDex
 
-Starter iOS reutilizable con SwiftUI y MVVM pragmático, organizado por features y preparado para comenzar una aplicación sin credenciales externas.
+ARKDex es una aplicación iOS de consulta para jugadores de **ARK: Survival Ascended**. Su objetivo es ofrecer acceso rápido y claro a información sobre las criaturas del juego, con una experiencia inspirada en la utilidad de herramientas como Dododex.
 
-## Requisitos
+El proyecto es independiente y no está afiliado con Studio Wildcard ni con Dododex. ARK y ARK: Survival Ascended pertenecen a sus respectivos titulares.
 
-- Xcode con soporte para Swift 6.
+## Estado actual
+
+La base técnica está operativa y la primera Home incluye:
+
+- Buscador centrado.
+- Dropdown adaptable con resultados temporales.
+- Paleta visual propia de ARKDex.
+- Tipografía Montserrat con Dynamic Type.
+- Localización en español e inglés.
+- Navegación y persistencia preparadas para crecer por features.
+
+Los datos reales de criaturas todavía no están integrados. El siguiente hito es definir el modelo `Creature`, seleccionar una fuente de datos verificable y conectar los resultados del buscador.
+
+## Objetivo del producto
+
+La primera versión útil de ARKDex deberá permitir:
+
+- Buscar criaturas por nombre.
+- Consultar una ficha con información relevante para el jugador.
+- Mostrar estadísticas y datos de domesticación con su fuente y versión.
+- Identificar mapas, hábitats o ubicaciones cuando los datos disponibles lo permitan.
+- Mantener una experiencia rápida, legible y útil durante una partida.
+
+Las calculadoras avanzadas, favoritos y disponibilidad offline forman parte del roadmap, no del estado actual.
+
+## Tecnología
+
+- SwiftUI.
 - iOS 17 o posterior.
-
-## Incluye
-
-- Swift 6 y Strict Concurrency completa.
-- `@Observable` y ViewModels aislados al `MainActor`.
-- Composition root sin singletons globales.
-- Navegación tipada y tab bar Home/Settings.
-- Networking con `URLSession`, errores tipados, timeout y logs redactados.
-- Persistencia key-value live e in-memory.
+- Swift 6 con Strict Concurrency completa.
+- Arquitectura MVVM pragmática organizada por features.
+- Swift Testing.
 - String Catalog ES/EN.
-- Design System semántico con la paleta del producto.
-- Tipografía Montserrat variable con soporte para Dynamic Type.
-- Home inicial con buscador centrado y sugerencias adaptables al contenido.
-- Previews deterministas.
-- Tests con Swift Testing.
-- Configuraciones Development/Production mediante `.xcconfig`.
-- CI, auditoría básica de secretos y checklist de renombrado.
+- Configuraciones Development y Production mediante `.xcconfig`.
+- Sin dependencias externas.
 
 ## Estructura
 
 ```text
-SwiftUIMVVMTemplate/
+ARKDex/
 ├── App/
 │   └── Navigation/
 ├── Core/
@@ -43,36 +59,33 @@ SwiftUIMVVMTemplate/
 ├── PreviewSupport/
 └── Resources/
 
-SwiftUIMVVMTemplateTests/
+ARKDexTests/
 ├── App/
 ├── Core/
 └── Features/
-
-Config/
-Scripts/
 ```
 
 ## Schemes
 
-- `SwiftUIMVVMTemplate-Development`: configuración Debug, bundle `.dev` y servicio Home mock para funcionar sin red.
-- `SwiftUIMVVMTemplate-Production`: configuración Release y ejemplo remoto basado en `API_BASE_URL`.
+- `ARKDex-Development`: configuración Debug, bundle `.dev` y datos mock.
+- `ARKDex-Production`: configuración Release y endpoint definido mediante `API_BASE_URL`.
 
-Los valores se encuentran en `Config/Development.xcconfig` y `Config/Production.xcconfig`.
+La URL incluida actualmente es un placeholder. No debe considerarse una fuente de datos de ARK.
 
 ## Validación
 
-Validación completa usando un simulador disponible:
+Validación completa:
 
 ```bash
-bash Scripts/validate-template.sh 'platform=iOS Simulator,name=iPhone 16,OS=latest'
+bash Scripts/validate-project.sh 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest'
 ```
 
 Build sin firma:
 
 ```bash
 xcodebuild \
-  -scheme SwiftUIMVVMTemplate-Development \
-  -project SwiftUIMVVMTemplate.xcodeproj \
+  -scheme ARKDex-Development \
+  -project ARKDex.xcodeproj \
   -destination generic/platform=iOS \
   CODE_SIGNING_ALLOWED=NO \
   build
@@ -82,19 +95,15 @@ Tests:
 
 ```bash
 xcodebuild \
-  -scheme SwiftUIMVVMTemplate-Development \
-  -project SwiftUIMVVMTemplate.xcodeproj \
-  -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+  -scheme ARKDex-Development \
+  -project ARKDex.xcodeproj \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
   test
 ```
 
 ## Configuración sensible
 
-El starter no contiene secretos. Si una aplicación necesita configuración local:
-
-1. Copiar `Config/Secrets.xcconfig.example` como `Config/Secrets.xcconfig`.
-2. Añadir allí únicamente valores locales.
-3. No subir `Secrets.xcconfig` a Git.
+`Config/Secrets.xcconfig.example` documenta el formato permitido. El archivo real `Secrets.xcconfig` está ignorado y nunca debe subirse al repositorio.
 
 Antes de publicar cambios:
 
@@ -102,19 +111,18 @@ Antes de publicar cambios:
 bash Scripts/check-secrets.sh
 ```
 
-## Crear una feature
-
-Mantener View, ViewModel, servicios y modelos específicos dentro de `Features/FeatureName`. Añadir capas solo cuando exista una responsabilidad real. Consultar `docs/FEATURE_GUIDE.md`.
-
 ## Documentación
 
-- `MVVM_STARTER_PROJECT_PROPOSAL.md`: propuesta de evolución recibida.
-- `MVVM_STARTER_PROJECT_RECOMMENDATIONS.md`: análisis técnico y plan aplicado.
-- `docs/ARCHITECTURE.md`: límites y decisiones de arquitectura.
-- `docs/IMPLEMENTATION_CHECKLIST.md`: estado de las cinco fases.
-- `docs/FEATURE_GUIDE.md`: patrón para nuevas features.
-- `docs/RENAME_CHECKLIST.md`: pasos para adoptar el starter.
-- `docs/GITHUB_WORKFLOW.md`: validaciones antes de subir cambios.
-- `docs/CODEX_INSTRUCTIONS.md`: reglas operativas para futuros cambios.
+- `ARKDEX_PRODUCT_VISION.md`: visión, alcance y principios del producto.
+- `ARKDEX_TECHNICAL_FOUNDATION.md`: decisiones técnicas y evolución prevista.
+- `DOCUMENTACION_ARKDEX_IOS.md`: guía general del proyecto iOS.
+- `docs/ARCHITECTURE.md`: límites de arquitectura y datos.
+- `docs/FEATURE_GUIDE.md`: patrón para añadir features.
+- `docs/PROJECT_STATUS.md`: estado funcional real.
+- `docs/PRODUCT_ROADMAP.md`: próximos hitos.
+- `docs/IMPLEMENTATION_CHECKLIST.md`: checklist de implementación.
+- `docs/GITHUB_WORKFLOW.md`: validación antes de subir cambios.
 
-Antes de subir cambios a GitHub, actualizar este README y los documentos afectados para que describan el código real.
+## Licencias
+
+El código del repositorio se distribuye bajo la licencia incluida en `LICENSE`. Montserrat conserva su licencia SIL Open Font License en `Montserrat/OFL.txt`.

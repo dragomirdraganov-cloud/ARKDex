@@ -24,8 +24,8 @@ jobs:
       - name: Build without signing
         run: >-
           xcodebuild
-          -scheme SwiftUIMVVMTemplate-Development
-          -project SwiftUIMVVMTemplate.xcodeproj
+          -scheme ARKDex-Development
+          -project ARKDex.xcodeproj
           -destination generic/platform=iOS
           CODE_SIGNING_ALLOWED=NO
           build
@@ -33,8 +33,8 @@ jobs:
       - name: Run unit tests
         run: >-
           xcodebuild
-          -scheme SwiftUIMVVMTemplate-Development
-          -project SwiftUIMVVMTemplate.xcodeproj
+          -scheme ARKDex-Development
+          -project ARKDex.xcodeproj
           -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
           test
 

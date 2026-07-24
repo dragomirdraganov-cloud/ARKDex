@@ -1,8 +1,7 @@
 #include "Base.xcconfig"
 
 APP_ENVIRONMENT = production
-API_BASE_URL = https:/$()/jsonplaceholder.typicode.com
-DISPLAY_NAME = MVVM Starter
-PRODUCT_BUNDLE_IDENTIFIER = com.example.SwiftUIMVVMTemplate
+API_BASE_URL = https:/$()/example.com
+DISPLAY_NAME = ARKDex
+PRODUCT_BUNDLE_IDENTIFIER = com.dragomirdraganov.arkdex
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) PRODUCTION
-

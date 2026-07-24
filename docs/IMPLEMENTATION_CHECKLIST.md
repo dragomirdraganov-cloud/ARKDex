@@ -1,61 +1,47 @@
-# Checklist de evolución v2
+# Checklist de implementación de ARKDex
 
 Última revisión: 2026-07-24.
 
-## Fase 1: Base verificable
+## Identidad y base técnica
 
-- [x] Añadir target de tests con Swift Testing.
-- [x] Añadir tests de router, ViewModels, APIClient y persistencia.
-- [x] Añadir mocks deterministas.
-- [x] Eliminar delays y red de tests/previews.
-- [x] Documentar build sin firma.
+- [x] Renombrar proyecto, target, módulo, tests y schemes a ARKDex.
+- [x] Configurar bundle identifiers de Development, Production y tests.
+- [x] Mantener iOS 17, Swift 6 y Strict Concurrency completa.
+- [x] Mantener CI, auditoría de secretos y tests.
+- [x] Aplicar la paleta de producto.
+- [x] Integrar Montserrat con Dynamic Type.
+- [x] Localizar textos en español e inglés.
 
-## Fase 2: Configuración moderna
+## Home
 
-- [x] Bajar deployment target a iOS 17.
-- [x] Añadir `.xcconfig` base, Development y Production.
-- [x] Añadir schemes Development y Production.
-- [x] Neutralizar bundle IDs, team, nombres y URLs.
-- [x] Añadir String Catalog ES/EN.
-- [x] Añadir plantilla de secretos ignorada por Git.
+- [x] Crear buscador centrado.
+- [x] Mostrar dropdown adaptable al escribir.
+- [x] Añadir tres resultados dummy claramente temporales.
+- [ ] Sustituir resultados dummy por criaturas reales.
+- [ ] Añadir estados vacío, carga y error del buscador.
 
-## Fase 3: Swift 6
+## Catálogo de criaturas
 
-- [x] Migrar a Swift 6.
-- [x] Activar Strict Concurrency completa.
-- [x] Mantener UI en MainActor e infraestructura fuera del actor global.
-- [x] Añadir contratos y modelos Sendable.
-- [x] Verificar build con concurrencia estricta.
+- [ ] Seleccionar y documentar una fuente de datos permitida.
+- [ ] Definir modelo `Creature`.
+- [ ] Definir contrato `CreatureRepository`.
+- [ ] Crear fixtures deterministas.
+- [ ] Implementar búsqueda normalizada.
+- [ ] Crear ficha de criatura.
+- [ ] Mostrar procedencia o versión de los datos.
 
-## Fase 4: Organización por features
+## Funciones posteriores
 
-- [x] Crear `AppRootView`, `AppDependencies` y `AppState`.
-- [x] Eliminar el singleton `AppContainer.shared`.
-- [x] Mover Home a `Features/Home`.
-- [x] Crear Settings y ExampleDetail.
-- [x] Mantener en Core solo infraestructura compartida.
-- [x] Añadir navegación tipada por tabs.
-
-## Fase 5: Infraestructura y plantilla
-
-- [x] Completar APIClient y request builder.
-- [x] Añadir persistencia live e in-memory.
-- [x] Añadir logging redactado.
-- [x] Añadir Design System semántico con la paleta del producto.
-- [x] Añadir previews de estados, temas e idiomas.
-- [x] Añadir CI y auditoría de secretos.
-- [x] Añadir checklist de renombrado y script de validación.
-- [ ] Validar adopción creando una segunda app pequeña.
+- [ ] Favoritos.
+- [ ] Caché o modo offline.
+- [ ] Filtros.
+- [ ] Comparación de criaturas.
+- [ ] Calculadoras de domesticación.
 
 ## Verificación
 
-- [x] El proyecto Xcode reconoce app y test target.
-- [x] El app build pasa con firma desactivada.
-- [x] Los tests compilan bajo Swift 6 Strict Concurrency.
-- [x] Los 13 tests pasan en simulador.
-- [x] README y documentación reflejan la arquitectura actual.
-
-## Evolución de producto
-
-- [x] Crear la Home inicial con buscador centrado y tres sugerencias dummy.
-- [x] Integrar Montserrat variable en los tokens tipográficos del Design System.
+- [x] El proyecto Xcode reconoce `ARKDex` y `ARKDexTests`.
+- [x] Build sin firma.
+- [x] Tests en simulador.
+- [x] Auditoría de secretos.
+- [x] README y documentación orientados al producto.
